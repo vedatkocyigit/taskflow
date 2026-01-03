@@ -1,0 +1,43 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: taskflow-backend
+
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/taskflow}
+    username: ${DB_USER:taskflow}
+    password: ${DB_PASSWORD:taskflow}
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    open-in-view: false
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:CHANGE_THIS_SECRET_KEY_AT_LEAST_32_CHARS_LONG}
+    expiration-minutes: 60
+
+logging:
+  level:
+    org.hibernate.SQL: debug
+    org.hibernate.orm.jdbc.bind: trace
+    org.springframework.security: debug
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health

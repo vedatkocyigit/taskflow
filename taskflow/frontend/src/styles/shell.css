@@ -1,0 +1,51 @@
+.app-shell {
+    min-height: 100vh;
+    background: #f6f7fb;
+}
+
+.app-header {
+    height: 56px;
+    background: #ffffff;
+    border-bottom: 1px solid #e5e7eb;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* 🔥 ASIL FARK */
+
+    padding: 0 20px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    font-weight: 600;
+    font-size: 18px;
+    color: #1f2937;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+}
+
+.logout-btn {
+    background: #ef4444;
+    color: white;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.logout-btn:hover {
+    background: #dc2626;
+}
+
+.app-content {
+    padding: 16px;
+}

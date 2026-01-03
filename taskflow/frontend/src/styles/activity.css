@@ -1,0 +1,20 @@
+.activity-item {
+    background: #f7f8fb;
+    border: 1px solid #eef0f6;
+    border-radius: 10px;
+    padding: 10px 12px;
+    margin-bottom: 10px;
+    font-size: 13px;
+}
+
+.activity-user {
+    color: #2563eb;
+    /* ✅ mavi */
+    font-weight: 700;
+}
+
+.activity-time {
+    margin-top: 6px;
+    font-size: 11px;
+    color: #6b7280;
+}

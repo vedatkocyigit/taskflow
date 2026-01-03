@@ -1,0 +1,99 @@
+pipeline {
+    agent any
+
+    environment {
+        JAVA_HOME = '/usr/lib/jvm/java-17-openjdk'
+        PATH = "${JAVA_HOME}/bin:${env.PATH}"
+    }
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                echo 'KAYNAK KOD ÇEKİLİYOR (Checkout)'
+
+                git branch: 'main',
+                    url: 'https://github.com/vedatkocyigit/taskflow.git'
+
+                echo 'Checkout tamamlandı'
+            }
+        }
+
+        stage('Build Backend') {
+            steps {
+                echo 'BACKEND BUILD BAŞLADI'
+                dir('taskflow/backend') {
+                    sh 'mvn clean compile'
+                }
+                echo 'Backend build başarılı'
+            }
+        }
+
+        stage('Build Frontend') {
+            steps {
+                echo 'FRONTEND BUILD BAŞLADI'
+                dir('taskflow/frontend') {
+                    sh 'npm ci'
+                    sh 'npm run build'
+                }
+                echo 'Frontend build başarılı'
+            }
+        }
+
+        stage('Unit Tests') {
+            steps {
+                echo 'UNIT TESTLER ÇALIŞIYOR'
+                dir('taskflow/backend') {
+                    sh 'mvn test -Punit'
+                }
+                echo 'Unit testler başarılı'
+            }
+        }
+
+        stage('Integration Tests') {
+            steps {
+                echo 'INTEGRATION TESTLER ÇALIŞIYOR'
+                dir('taskflow/backend') {
+                    sh 'mvn verify -Pit'
+                }
+                echo 'Integration testler başarılı'
+            }
+        }
+
+        stage('Start System (Docker Compose)') {
+            steps {
+                echo 'SİSTEM AYAĞA KALDIRILIYOR (Docker Compose)'
+                sh 'docker compose down -v || true'
+                sh 'docker compose up -d --build'
+                echo 'Servislerin ayağa kalkması bekleniyor (20 sn)'
+                sh 'sleep 20'
+                echo 'Sistem hazır'
+            }
+        }
+
+        stage('E2E Tests') {
+            steps {
+                echo 'E2E TESTLER BAŞLADI'
+                dir('taskflow/backend') {
+                    sh 'mvn test -Pe2e'
+                }
+                echo 'E2E testler başarılı'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Docker ortamı temizleniyor'
+            sh 'docker compose down || true'
+        }
+
+        success {
+            echo 'PIPELINE BAŞARILI – TÜM ADIMLAR GEÇTİ'
+        }
+
+        failure {
+            echo 'PIPELINE HATA ALDI – LOG’LARI KONTROL ET'
+        }
+    }
+}

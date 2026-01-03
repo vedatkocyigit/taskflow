@@ -1,0 +1,130 @@
+.tasks-board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    height: calc(100vh - 120px);
+}
+
+.task-column {
+    background: var(--card-bg);
+    border-radius: var(--radius);
+    padding: 12px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+}
+
+.task-column-title {
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.task-list {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.task-card {
+    padding: 10px;
+    border-radius: 8px;
+    background: #f9fafb;
+    cursor: pointer;
+}
+
+.task-card:hover {
+    background: #f1f5f9;
+}
+
+.task-create {
+    margin-top: 8px;
+    display: flex;
+    gap: 6px;
+}
+
+.task-input {
+    flex: 1;
+    padding: 8px;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+}
+
+.task-create {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}
+
+.send-btn {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background: #2563eb;
+    /* mavi */
+    color: white;
+    /* ok beyaz */
+    border: none;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.2s, transform 0.1s;
+}
+
+.send-btn:hover {
+    background: #1d4ed8;
+}
+
+.send-btn:active {
+    transform: scale(0.95);
+}
+
+.send-btn {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.send-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #2563eb;
+    border: none;
+    cursor: pointer;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.send-btn:hover {
+    background: #1d4ed8;
+}
+
+.send-btn:active {
+    transform: scale(0.95);
+}
+
+.task-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 6px;
+}
+
+.task-tag {
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 8px;
+    border-radius: 999px;
+    color: white;
+    line-height: 1;
+    white-space: nowrap;
+}
