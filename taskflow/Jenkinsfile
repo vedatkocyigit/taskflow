@@ -1,30 +1,66 @@
 pipeline {
     agent any
 
-    options {
-        skipDefaultCheckout(true)
-        timestamps()
-    }
-
     stages {
+
+        stage('Check & Install Dependencies') {
+    steps {
+        sh '''
+        set -e
+
+        echo "Ortam kontrol ediliyor..."
+
+        command_exists() {
+          command -v "$1" >/dev/null 2>&1
+        }
+
+        if ! command_exists java; then
+          echo "Java yok"
+          exit 1
+        fi
+
+        if ! command_exists mvn; then
+          echo "Maven kuruluyor"
+          apt-get update && apt-get install -y maven
+        fi
+
+        if ! command_exists node; then
+          echo "Node.js kuruluyor"
+          curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+          apt-get install -y nodejs
+        fi
+
+        if ! command_exists npm; then
+          echo "npm gelmedi (node kurulumu hatalı)"
+          exit 1
+        fi
+
+        if ! command_exists docker; then
+          echo "Docker CLI kuruluyor"
+          apt-get update && apt-get install -y docker.io
+        fi
+
+        if ! docker compose version >/dev/null 2>&1; then
+          echo "Docker Compose plugin kuruluyor"
+          apt-get update && apt-get install -y docker-compose-plugin
+        fi
+
+        echo "Tüm bağımlılıklar hazır"
+        '''
+    }
+}
 
         stage('Checkout') {
             steps {
-                echo '📥 Kaynak kod çekiliyor'
+                echo 'Kaynak kod çekiliyor'
                 git branch: 'main',
                     url: 'https://github.com/vedatkocyigit/taskflow.git'
             }
         }
 
         stage('Build Backend') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                    reuseNode true
-                }
-            }
             steps {
-                echo '🛠 Backend build'
+                echo 'Backend build'
                 dir('backend') {
                     sh 'mvn clean compile'
                 }
@@ -32,14 +68,8 @@ pipeline {
         }
 
         stage('Build Frontend') {
-            agent {
-                docker {
-                    image 'node:20-alpine'
-                    reuseNode true
-                }
-            }
             steps {
-                echo '🎨 Frontend build'
+                echo 'Frontend build'
                 dir('frontend') {
                     sh 'npm ci'
                     sh 'npm run build'
@@ -48,14 +78,8 @@ pipeline {
         }
 
         stage('Unit Tests') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                    reuseNode true
-                }
-            }
             steps {
-                echo '🧪 Unit tests'
+                echo 'Unit tests'
                 dir('backend') {
                     sh 'mvn test -Punit'
                 }
@@ -63,14 +87,8 @@ pipeline {
         }
 
         stage('Integration Tests') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                    reuseNode true
-                }
-            }
             steps {
-                echo '🔗 Integration tests'
+                echo 'Integration tests'
                 dir('backend') {
                     sh 'mvn verify -Pit'
                 }
@@ -79,7 +97,7 @@ pipeline {
 
         stage('Start System (Docker Compose)') {
             steps {
-                echo '🚀 Sistem ayağa kalkıyor'
+                echo 'Sistem ayağa kalkıyor'
                 sh 'docker compose down -v || true'
                 sh 'docker compose up -d --build'
                 sh 'sleep 20'
@@ -87,14 +105,8 @@ pipeline {
         }
 
         stage('E2E Tests') {
-            agent {
-                docker {
-                    image 'maven:3.9.6-eclipse-temurin-17'
-                    reuseNode true
-                }
-            }
             steps {
-                echo '🧭 E2E tests'
+                echo 'E2E tests'
                 dir('backend') {
                     sh 'mvn test -Pe2e'
                 }
@@ -104,16 +116,16 @@ pipeline {
 
     post {
         always {
-            echo '🧹 Docker temizleniyor'
+            echo 'Docker temizleniyor'
             sh 'docker compose down || true'
         }
 
         success {
-            echo '✅ PIPELINE BAŞARILI'
+            echo 'PIPELINE BAŞARILI'
         }
 
         failure {
-            echo '❌ PIPELINE HATA ALDI'
+            echo 'PIPELINE HATA ALDI'
         }
     }
 }
