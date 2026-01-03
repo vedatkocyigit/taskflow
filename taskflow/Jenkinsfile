@@ -47,6 +47,17 @@ pipeline {
                 }
             }
         }
+        stage('Security Scan') {
+                    steps {
+                        echo 'Güvenlik taraması yapılıyor'
+                        dir('taskflow/backend') {
+                            sh 'mvn org.owasp:dependency-check-maven:check || true'
+                        }
+                        dir('taskflow/frontend') {
+                            sh 'npm audit --audit-level=high || true'
+                        }
+                    }
+                }
         stage('Start System (Docker Compose)') {
             steps {
                 dir('taskflow') {         
@@ -61,6 +72,14 @@ pipeline {
                 }
             }
         }
+                stage('Performance Tests') {
+                    steps {
+                        echo '⚡ Performans testleri yapılıyor'
+                        dir('taskflow') {
+                            sh 'k6 run performance/load-test.js || true'
+                        }
+                    }
+                }
         stage('E2E Tests') {
             steps {
                 echo 'E2E tests'
