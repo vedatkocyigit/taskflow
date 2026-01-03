@@ -50,10 +50,14 @@ pipeline {
         stage('Start System (Docker Compose)') {
             steps {
                 dir('taskflow') {         
+                    echo '🧹 Docker temizleniyor'
+                    sh 'docker compose down -v --remove-orphans || true'
+                    sh 'docker system prune -af || true'
+                    sh 'docker volume prune -f || true'
+                    
                     echo '🚀 Sistem ayağa kalkıyor'
-                    sh 'docker compose down -v || true'
                     sh 'docker compose up -d --build'
-                    sh 'sleep 20'
+                    sh 'sleep 30'
                 }
             }
         }
