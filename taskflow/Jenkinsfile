@@ -1,6 +1,10 @@
 pipeline {
     agent any
 
+    options {
+        skipDefaultCheckout(true)
+        timestamps()
+    }
 
     stages {
 
@@ -13,6 +17,12 @@ pipeline {
         }
 
         stage('Build Backend') {
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-17'
+                    reuseNode true
+                }
+            }
             steps {
                 echo '🛠 Backend build'
                 dir('backend') {
@@ -22,6 +32,12 @@ pipeline {
         }
 
         stage('Build Frontend') {
+            agent {
+                docker {
+                    image 'node:20-alpine'
+                    reuseNode true
+                }
+            }
             steps {
                 echo '🎨 Frontend build'
                 dir('frontend') {
@@ -32,8 +48,14 @@ pipeline {
         }
 
         stage('Unit Tests') {
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-17'
+                    reuseNode true
+                }
+            }
             steps {
-                echo '🧪 Unit testler'
+                echo '🧪 Unit tests'
                 dir('backend') {
                     sh 'mvn test -Punit'
                 }
@@ -41,8 +63,14 @@ pipeline {
         }
 
         stage('Integration Tests') {
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-17'
+                    reuseNode true
+                }
+            }
             steps {
-                echo '🧪 Integration testler'
+                echo '🔗 Integration tests'
                 dir('backend') {
                     sh 'mvn verify -Pit'
                 }
@@ -51,17 +79,22 @@ pipeline {
 
         stage('Start System (Docker Compose)') {
             steps {
-                echo '🐳 Sistem ayağa kaldırılıyor'
+                echo '🚀 Sistem ayağa kalkıyor'
                 sh 'docker compose down -v || true'
                 sh 'docker compose up -d --build'
-                echo '⏳ Servisler için bekleniyor'
                 sh 'sleep 20'
             }
         }
 
         stage('E2E Tests') {
+            agent {
+                docker {
+                    image 'maven:3.9.6-eclipse-temurin-17'
+                    reuseNode true
+                }
+            }
             steps {
-                echo '🧪 E2E testler'
+                echo '🧭 E2E tests'
                 dir('backend') {
                     sh 'mvn test -Pe2e'
                 }
