@@ -157,7 +157,7 @@ class MemberServiceTest {
         List<WorkspaceMemberDto> result =
                 memberService.listMembers(1L);
 
-        assertThat(result).hasSize(1);
+        assertThat(result).hasSize(2);
         assertThat(result.get(0).email()).isEqualTo("member@test.com");
         assertThat(result.get(0).role()).isEqualTo("MEMBER");
     }

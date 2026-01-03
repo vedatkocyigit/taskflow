@@ -9,14 +9,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo '📥 Kaynak kod çekiliyor'
+                echo 'Kaynak kod çekiliyor'
                 git branch: 'main',
                     url: 'https://github.com/vedatkocyigit/taskflow.git'
             }
         }
         stage('Build Backend') {
             steps {
-                echo '🛠 Backend build'
+                echo 'Backend build'
                 dir('taskflow/backend') {
                     sh 'mvn clean compile'
                 }
@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Build Frontend') {
             steps {
-                echo '🎨 Frontend build'
+                echo 'Frontend build'
                 dir('taskflow/frontend') {
                     sh 'npm ci'
                     sh 'npm run build'
@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                echo '🧪 Unit tests'
+                echo 'Unit tests'
                 dir('taskflow/backend') {
                     sh 'mvn test -Punit'
                 }
@@ -41,7 +41,7 @@ pipeline {
         }
         stage('Integration Tests') {
             steps {
-                echo '🔗 Integration tests'
+                echo 'Integration tests'
                 dir('taskflow/backend') {
                     sh 'mvn verify -Pit'
                 }
@@ -50,12 +50,12 @@ pipeline {
         stage('Start System (Docker Compose)') {
             steps {
                 dir('taskflow') {         
-                    echo '🧹 Docker temizleniyor'
+                    echo 'Docker temizleniyor'
                     sh 'docker compose down -v --remove-orphans || true'
                     sh 'docker system prune -af || true'
                     sh 'docker volume prune -f || true'
                     
-                    echo '🚀 Sistem ayağa kalkıyor'
+                    echo 'Sistem ayağa kalkıyor'
                     sh 'docker compose up -d --build'
                     sh 'sleep 30'
                 }
@@ -63,7 +63,7 @@ pipeline {
         }
         stage('E2E Tests') {
             steps {
-                echo '🧭 E2E tests'
+                echo 'E2E tests'
                 dir('taskflow/backend') {
                     sh 'mvn test -Pe2e'
                 }
@@ -72,16 +72,16 @@ pipeline {
     }
     post {
         always {
-            echo '🧹 Docker temizleniyor'
+            echo 'Docker temizleniyor'
             dir('taskflow') {
                 sh 'docker compose down || true'
             }
         }
         success {
-            echo '✅ PIPELINE BAŞARILI'
+            echo 'PIPELINE BAŞARILI'
         }
         failure {
-            echo '❌ PIPELINE HATA ALDI'
+            echo 'PIPELINE HATA ALDI'
         }
     }
 }
