@@ -1,16 +1,6 @@
 pipeline {
     agent any
 
-    tools {
-        jdk 'jdk-17'
-        maven 'maven-3'
-        nodejs 'node-20'
-    }
-
-    options {
-        skipDefaultCheckout(true)
-        timestamps()
-    }
 
     stages {
 
