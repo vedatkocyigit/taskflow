@@ -1,8 +1,12 @@
 pipeline {
     agent any
-
+    
+    environment {
+        PATH = "/opt/homebrew/bin:/usr/local/bin:${env.PATH}"
+        JAVA_HOME = "/opt/homebrew/opt/openjdk@17"
+    }
+    
     stages {
-
         stage('Checkout') {
             steps {
                 echo '📥 Kaynak kod çekiliyor'
@@ -10,7 +14,6 @@ pipeline {
                     url: 'https://github.com/vedatkocyigit/taskflow.git'
             }
         }
-
         stage('Build Backend') {
             steps {
                 echo '🛠 Backend build'
@@ -19,7 +22,6 @@ pipeline {
                 }
             }
         }
-
         stage('Build Frontend') {
             steps {
                 echo '🎨 Frontend build'
@@ -29,7 +31,6 @@ pipeline {
                 }
             }
         }
-
         stage('Unit Tests') {
             steps {
                 echo '🧪 Unit tests'
@@ -38,7 +39,6 @@ pipeline {
                 }
             }
         }
-
         stage('Integration Tests') {
             steps {
                 echo '🔗 Integration tests'
@@ -47,18 +47,16 @@ pipeline {
                 }
             }
         }
-
         stage('Start System (Docker Compose)') {
             steps {
-                dir('taskflow'){         
-                echo '🚀 Sistem ayağa kalkıyor'
-                sh 'docker-compose down -v || true'
-                sh 'docker-compose up -d --build'
-                sh 'sleep 20'
+                dir('taskflow') {         
+                    echo '🚀 Sistem ayağa kalkıyor'
+                    sh 'docker compose down -v || true'
+                    sh 'docker compose up -d --build'
+                    sh 'sleep 20'
                 }
             }
         }
-
         stage('E2E Tests') {
             steps {
                 echo '🧭 E2E tests'
@@ -68,19 +66,16 @@ pipeline {
             }
         }
     }
-
     post {
         always {
             echo '🧹 Docker temizleniyor'
-            dir('taskflow'){
-                            sh 'docker-compose down || true'
+            dir('taskflow') {
+                sh 'docker compose down || true'
             }
         }
-
         success {
             echo '✅ PIPELINE BAŞARILI'
         }
-
         failure {
             echo '❌ PIPELINE HATA ALDI'
         }
