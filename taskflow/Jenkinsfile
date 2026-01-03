@@ -47,7 +47,7 @@ pipeline {
                 }
             }
         }
-        stage('Security Scan') {
+                stage('Security Scan') {
                     steps {
                         echo 'Güvenlik taraması yapılıyor'
                         dir('taskflow/backend') {
@@ -72,11 +72,11 @@ pipeline {
                 }
             }
         }
-                stage('Performance Tests') {
+        stage('Performance Tests') {
                     steps {
-                        echo '⚡ Performans testleri yapılıyor'
+                        echo 'Performans testleri yapılıyor'
                         dir('taskflow') {
-                            sh 'k6 run performance/load-test.js || true'
+                            sh 'k6 run --summary-trend-stats="avg,min,med,max,p(90),p(95)" performance/load-test.js || true'
                         }
                     }
                 }
