@@ -3,56 +3,9 @@ pipeline {
 
     stages {
 
-        stage('Check & Install Dependencies') {
-    steps {
-        sh '''
-        set -e
-
-        echo "Ortam kontrol ediliyor..."
-
-        command_exists() {
-          command -v "$1" >/dev/null 2>&1
-        }
-
-        if ! command_exists java; then
-          echo "Java yok"
-          exit 1
-        fi
-
-        if ! command_exists mvn; then
-          echo "Maven kuruluyor"
-          apt-get update && apt-get install -y maven
-        fi
-
-        if ! command_exists node; then
-          echo "Node.js kuruluyor"
-          curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
-          apt-get install -y nodejs
-        fi
-
-        if ! command_exists npm; then
-          echo "npm gelmedi (node kurulumu hatalı)"
-          exit 1
-        fi
-
-        if ! command_exists docker; then
-          echo "Docker CLI kuruluyor"
-          apt-get update && apt-get install -y docker.io
-        fi
-
-        if ! docker compose version >/dev/null 2>&1; then
-          echo "Docker Compose plugin kuruluyor"
-          apt-get update && apt-get install -y docker-compose-plugin
-        fi
-
-        echo "Tüm bağımlılıklar hazır"
-        '''
-    }
-}
-
         stage('Checkout') {
             steps {
-                echo 'Kaynak kod çekiliyor'
+                echo '📥 Kaynak kod çekiliyor'
                 git branch: 'main',
                     url: 'https://github.com/vedatkocyigit/taskflow.git'
             }
@@ -60,8 +13,8 @@ pipeline {
 
         stage('Build Backend') {
             steps {
-                echo 'Backend build'
-                dir('backend') {
+                echo '🛠 Backend build'
+                dir('taskflow/backend') {
                     sh 'mvn clean compile'
                 }
             }
@@ -69,8 +22,8 @@ pipeline {
 
         stage('Build Frontend') {
             steps {
-                echo 'Frontend build'
-                dir('frontend') {
+                echo '🎨 Frontend build'
+                dir('taskflow/frontend') {
                     sh 'npm ci'
                     sh 'npm run build'
                 }
@@ -79,8 +32,8 @@ pipeline {
 
         stage('Unit Tests') {
             steps {
-                echo 'Unit tests'
-                dir('backend') {
+                echo '🧪 Unit tests'
+                dir('taskflow/backend') {
                     sh 'mvn test -Punit'
                 }
             }
@@ -88,8 +41,8 @@ pipeline {
 
         stage('Integration Tests') {
             steps {
-                echo 'Integration tests'
-                dir('backend') {
+                echo '🔗 Integration tests'
+                dir('taskflow/backend') {
                     sh 'mvn verify -Pit'
                 }
             }
@@ -97,17 +50,17 @@ pipeline {
 
         stage('Start System (Docker Compose)') {
             steps {
-                echo 'Sistem ayağa kalkıyor'
-                sh 'docker compose down -v || true'
-                sh 'docker compose up -d --build'
+                echo '🚀 Sistem ayağa kalkıyor'
+                sh 'docker-compose down -v || true'
+                sh 'docker-compose up -d --build'
                 sh 'sleep 20'
             }
         }
 
         stage('E2E Tests') {
             steps {
-                echo 'E2E tests'
-                dir('backend') {
+                echo '🧭 E2E tests'
+                dir('taskflow/backend') {
                     sh 'mvn test -Pe2e'
                 }
             }
@@ -116,16 +69,16 @@ pipeline {
 
     post {
         always {
-            echo 'Docker temizleniyor'
-            sh 'docker compose down || true'
+            echo '🧹 Docker temizleniyor'
+            sh 'docker-compose down || true'
         }
 
         success {
-            echo 'PIPELINE BAŞARILI'
+            echo '✅ PIPELINE BAŞARILI'
         }
 
         failure {
-            echo 'PIPELINE HATA ALDI'
+            echo '❌ PIPELINE HATA ALDI'
         }
     }
 }
