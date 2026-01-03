@@ -151,8 +151,4 @@ public class MemberAuthorizationE2ETest extends BaseE2ETest {
         driver.findElement(By.cssSelector(".logout-btn")).click();
         sleep(800);
     }
-
-    private void sleep(long ms) {
-        try { Thread.sleep(ms); } catch (InterruptedException ignored) {}
-    }
 }
