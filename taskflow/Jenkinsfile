@@ -9,14 +9,14 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                echo 'Kaynak kod çekiliyor'
+                echo 'Kaynak kod çekiliyor !'
                 git branch: 'main',
                     url: 'https://github.com/vedatkocyigit/taskflow.git'
             }
         }
         stage('Build Backend') {
             steps {
-                echo 'Backend build'
+                echo 'Backend inşa ediliyor !'
                 dir('taskflow/backend') {
                     sh 'mvn clean compile'
                 }
@@ -24,7 +24,7 @@ pipeline {
         }
         stage('Build Frontend') {
             steps {
-                echo 'Frontend build'
+                echo 'Frontend inşa ediliyor !'
                 dir('taskflow/frontend') {
                     sh 'npm ci'
                     sh 'npm run build'
@@ -33,7 +33,7 @@ pipeline {
         }
         stage('Unit Tests') {
             steps {
-                echo 'Unit tests'
+                echo 'Birim testleri yapılıyor !'
                 dir('taskflow/backend') {
                     sh 'mvn test -Punit'
                 }
@@ -41,32 +41,32 @@ pipeline {
         }
         stage('Integration Tests') {
             steps {
-                echo 'Integration tests'
+                echo 'Entegrasyon testleri yapılıyor !'
                 dir('taskflow/backend') {
                     sh 'mvn verify -Pit'
                 }
             }
         }
-                stage('Security Scan') {
-                    steps {
-                        echo 'Güvenlik taraması yapılıyor'
-                        dir('taskflow/backend') {
-                            sh 'mvn org.owasp:dependency-check-maven:check || true'
-                        }
-                        dir('taskflow/frontend') {
-                            sh 'npm audit --audit-level=high || true'
-                        }
-                    }
-                }
+        stage('Security Scan') {
+             steps {
+                 echo 'Güvenlik taraması yapılıyor !'
+                 dir('taskflow/backend') {
+                      sh 'mvn org.owasp:dependency-check-maven:check || true'
+                 }
+                 dir('taskflow/frontend') {
+                      sh 'npm audit --audit-level=high || true'
+                 }
+              }
+        }
         stage('Start System (Docker Compose)') {
             steps {
                 dir('taskflow') {         
-                    echo 'Docker temizleniyor'
+                    echo 'Docker temizleniyor !'
                     sh 'docker compose down -v --remove-orphans || true'
                     sh 'docker system prune -af || true'
                     sh 'docker volume prune -f || true'
                     
-                    echo 'Sistem ayağa kalkıyor'
+                    echo 'Sistem ayağa kalkıyor !'
                     sh 'docker compose up -d --build'
                     sh 'sleep 30'
                 }
@@ -74,15 +74,15 @@ pipeline {
         }
         stage('Performance Tests') {
                     steps {
-                        echo 'Performans testleri yapılıyor'
+                        echo 'Performans testleri yapılıyor !'
                         dir('taskflow') {
                             sh 'k6 run --summary-trend-stats="avg,min,med,max,p(90),p(95)" performance/load-test.js || true'
                         }
                     }
-                }
+        }
         stage('E2E Tests') {
             steps {
-                echo 'E2E tests'
+                echo 'Sistem testleri yapılıyor !'
                 dir('taskflow/backend') {
                     sh 'mvn test -Pe2e'
                 }
@@ -91,16 +91,16 @@ pipeline {
     }
     post {
         always {
-            echo 'Docker temizleniyor'
+            echo 'Docker temizleniyor !'
             dir('taskflow') {
                 sh 'docker compose down || true'
             }
         }
         success {
-            echo 'PIPELINE BAŞARILI'
+            echo 'PIPELINE BAŞARILI !'
         }
         failure {
-            echo 'PIPELINE HATA ALDI'
+            echo 'PIPELINE HATA ALDI !!!'
         }
     }
 }
