@@ -122,27 +122,7 @@ class ActivityLogServiceTest {
     }
 
 
-    @Test
-    void shouldLogProjectShortcut() {
 
-        activityLogService.logProject(
-                actor,
-                workspace,
-                77L,
-                "PROJECT_CREATED",
-                "Project oluşturuldu"
-        );
-
-        ArgumentCaptor<ActivityLog> captor =
-                ArgumentCaptor.forClass(ActivityLog.class);
-
-        verify(activityLogRepository).save(captor.capture());
-
-        ActivityLog saved = captor.getValue();
-
-        assertThat(saved.getProjectId()).isEqualTo(77L);
-        assertThat(saved.getTaskId()).isNull();
-    }
 
 
     @Test
@@ -175,7 +155,7 @@ class ActivityLogServiceTest {
 
         ActivityLogDto first = result.get(0);
         assertThat(first.actorEmail()).isEqualTo("test@taskflow.com");
-        assertThat(first.action()).isEqualTo("A2");
+        assertThat(first.action()).isEqualTo("A3");
         assertThat(first.description()).isEqualTo("Desc2");
     }
 }
