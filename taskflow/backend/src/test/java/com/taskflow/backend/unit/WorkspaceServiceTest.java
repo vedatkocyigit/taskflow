@@ -138,7 +138,7 @@ class WorkspaceServiceTest {
         Workspace result =
                 workspaceService.getById(10L);
 
-        assertThat(result.getName()).isEqualTo("My Workspace");
+        assertThat(result.getName()).isEqualTo("My Workspaces");
     }
 
     @Test
