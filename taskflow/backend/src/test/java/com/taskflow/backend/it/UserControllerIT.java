@@ -88,7 +88,7 @@ class UserControllerIT extends BaseIntegrationTest {
                         get("/api/users/search")
                                 .with(authentication(auth(user)))
                                 .param("email", "test@taskflow.com")
-                                .param("workspaceId", "1") // controller içinde şimdilik kullanılmıyor
+                                .param("workspaceId", "1") 
                                 .contentType(MediaType.APPLICATION_JSON)
                 )
                 .andExpect(status().isOk())
