@@ -96,7 +96,6 @@ class ProjectControllerIT extends BaseIntegrationTest {
     @Test
     void shouldCreateProject() throws Exception {
 
-        // 🔐 OWNER CONTEXT
         setPrincipal(owner);
 
         CreateProjectRequest request =
